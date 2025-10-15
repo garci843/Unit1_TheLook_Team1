@@ -1,8 +1,10 @@
 What I found:
+
 I found that revenue had steadily increased thoughout 2025 until taking a sharp decline in October. The month to month percentage change from September to October was -.6853 which indicates a sharp decline. Average order value per month did not have a general direction as the value would increase and decrease essentially every year. Gross profit increased from 2019 to 2025, however the gross profit margin stayed constant throughout that same time.
 
 
 What changed after validation:
+
 The prompt to calculate the gross profit margin implied that you could directly calculate gross profit margin only by grouping monthly order data — but in some cases, gross profit margin should be derived from product-level or order-level data first, then aggregated.
 
 If you sum revenue and COGS first, then divide, you get the true weighted margin.
