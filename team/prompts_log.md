@@ -77,7 +77,166 @@ Ethan:
 
 
 
-Arman:
+Arman: Gemini Prompt Cells
+
+Hypothesis A — Prompt Log
+Prompt to Gemini
+
+“Write BigQuery Standard SQL to return the top 10 product categories by revenue in the last 90 days from bigquery-public-data.thelook_ecommerce. Join order_items→orders (for status/date) and products (for category). Filter to Complete orders. Return category, revenue, orders, and AOV (= revenue / distinct orders). Order by revenue desc.”
+
+Key suggestions I used
+
+• Use COALESCE(oi.status,o.status), COALESCE(DATE(oi.created_at),DATE(o.created_at)).
+
+• Compute AOV via SAFE_DIVIDE(SUM(sale_price), COUNT(DISTINCT order_id)).
+
+• Limit to the last 90 days with DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY).
+
+
+# Hypothesis A — SQL (store results in a Pandas DataFrame)
+
+query_hyp_a = """
+WITH filtered AS (
+  SELECT
+    p.category,
+    oi.order_id,
+    oi.sale_price
+  FROM `bigquery-public-data.thelook_ecommerce.order_items` oi
+  LEFT JOIN `bigquery-public-data.thelook_ecommerce.orders`   o ON oi.order_id   = o.order_id
+  LEFT JOIN `bigquery-public-data.thelook_ecommerce.products` p ON oi.product_id = p.id
+  WHERE COALESCE(oi.status, o.status) = 'Complete'
+    AND COALESCE(DATE(oi.created_at), DATE(o.created_at)) >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)
+),
+agg AS (
+  SELECT
+    category,
+    SUM(sale_price) AS revenue,
+    COUNT(DISTINCT order_id) AS orders,
+    SAFE_DIVIDE(SUM(sale_price), NULLIF(COUNT(DISTINCT order_id),0)) AS aov
+  FROM filtered
+  GROUP BY category
+)
+SELECT * FROM agg
+ORDER BY revenue DESC
+LIMIT 10
+"""
+df_hyp_a = run_bq(query_hyp_a)
+df_hyp_a.head(10)
+     
+Interpretation (2–4 sentences): Top categories by revenue in the last quarter are surfaced here along with order counts and AOV. Use this to select a focus category for the deep dive and to inform the Looker bar chart (Top 5 categories). High AOV with relatively few orders can indicate premium niches; the opposite suggests volume plays.
+
+Hypothesis B — Prompt Log
+Prompt to Gemini
+
+“Compare device performance for AOV using both mean and median in thelook_ecommerce. Heuristically attribute device via events within 7 days before the order date (join on user_id). Return device, lines, mean_aov_proxy, median_aov_proxy. Filter to Complete orders in the last 90 days.”
+
+Key suggestions I used
+
+• Join events with DATE_DIFF(f.order_date, e.event_date, DAY) BETWEEN 0 AND 7.
+
+• Median via APPROX_QUANTILES(sale_price, 100)[OFFSET(50)].
+
+• Show counts to judge stability of device comparisons.
+
+
+# Hypothesis B — SQL
+
+query_hyp_b = """
+WITH base AS (
+  SELECT
+    COALESCE(DATE(oi.created_at), DATE(o.created_at)) AS order_date,
+    oi.order_id,
+    oi.sale_price,
+    o.user_id
+  FROM `bigquery-public-data.thelook_ecommerce.order_items` oi
+  LEFT JOIN `bigquery-public-data.thelook_ecommerce.orders` o
+    ON oi.order_id = o.order_id
+  WHERE COALESCE(oi.status, o.status) = 'Complete'
+    AND COALESCE(DATE(oi.created_at), DATE(o.created_at)) >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)
+),
+events AS (
+  SELECT user_id, device, DATE(event_timestamp) AS event_date
+  FROM `bigquery-public-data.thelook_ecommerce.events`
+),
+joined AS (
+  SELECT
+    b.order_id,
+    b.sale_price,
+    ANY_VALUE(e.device) AS device
+  FROM base b
+  LEFT JOIN events e
+    ON e.user_id = b.user_id
+   AND DATE_DIFF(b.order_date, e.event_date, DAY) BETWEEN 0 AND 7
+  GROUP BY 1,2
+)
+SELECT
+  COALESCE(device, 'Unknown') AS device,
+  COUNT(*) AS lines,
+  AVG(sale_price) AS mean_aov_proxy,
+  APPROX_QUANTILES(sale_price, 100)[OFFSET(50)] AS median_aov_proxy
+FROM joined
+GROUP BY 1
+ORDER BY lines DESC
+"""
+df_hyp_b = run_bq(query_hyp_b)
+df_hyp_b
+     
+Interpretation (2–4 sentences): If mean and median diverge by device, outliers are influencing the mean. Use median for strategy decisions (e.g., mobile vs. desktop budget mix) and watch the lines column to ensure sufficient sample size by device.
+
+Hypothesis C — Prompt Log
+Prompt to Gemini
+
+“Within a chosen category and customer segment, examine whether average discount % correlates with revenue by state in thelook_ecommerce. Compute discount as (retail_price - sale_price)/retail_price. Return state, revenue, orders, avg_discount_pct. Filter to Complete orders in the last 180 days.”
+
+Key suggestions I used
+
+• Segment example: gender = 'F' or age BETWEEN 18 AND 34.
+
+• Aggregate at state level to support a discount-vs-revenue scatter/bubble.
+
+• Use SAFE_DIVIDE to avoid divide-by-zero on retail price.
+
+
+# Hypothesis C — SQL
+
+DEEP_CATEGORY = "Womens Dresses"
+SEGMENT_WHERE = "u.gender = 'F'"
+
+query_hyp_c = f"""
+WITH filtered AS (
+  SELECT
+    u.country,
+    u.state,
+    p.category,
+    oi.order_id,
+    oi.sale_price,
+    p.retail_price
+  FROM `bigquery-public-data.thelook_ecommerce.order_items` oi
+  LEFT JOIN `bigquery-public-data.thelook_ecommerce.orders`   o ON oi.order_id   = o.order_id
+  LEFT JOIN `bigquery-public-data.thelook_ecommerce.users`    u ON o.user_id     = u.id
+  LEFT JOIN `bigquery-public-data.thelook_ecommerce.products` p ON oi.product_id = p.id
+  WHERE COALESCE(oi.status, o.status) = 'Complete'
+    AND COALESCE(DATE(oi.created_at), DATE(o.created_at)) >= DATE_SUB(CURRENT_DATE(), INTERVAL 180 DAY)
+    AND p.category = '{DEEP_CATEGORY}'
+    AND {SEGMENT_WHERE}
+),
+by_state AS (
+  SELECT
+    country,
+    state,
+    SUM(sale_price) AS revenue,
+    COUNT(DISTINCT order_id) AS orders,
+    AVG(SAFE_DIVIDE(retail_price - sale_price, NULLIF(retail_price,0))) AS avg_discount_pct
+  FROM filtered
+  GROUP BY 1,2
+)
+SELECT * FROM by_state
+ORDER BY revenue DESC
+"""
+df_hyp_c = run_bq(query_hyp_c)
+df_hyp_c.head(10)
+     
+Interpretation (2–4 sentences): If states with higher avg_discount_pct also have higher revenue, this category/segment may be price-elastic there. If revenue is high while discounts are low, consider inventory priority or localized merchandising rather than discounting.
 
 
 
