@@ -77,6 +77,9 @@ Ethan:
 
 
 
+
+
+
 Arman: Gemini Prompt Cells
 
 Hypothesis A — Prompt Log
