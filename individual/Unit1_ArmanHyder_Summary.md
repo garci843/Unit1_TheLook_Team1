@@ -1,4 +1,4 @@
-# **Unit 1 Summary** — Arman Hyder (Revised and Expanded)
+# **Unit 1 Summary** — Arman Hyder
 
 ## Discover: Identifying Key Performance Indicators and Trends
 
