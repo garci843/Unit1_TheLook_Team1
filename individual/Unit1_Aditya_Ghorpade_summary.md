@@ -1,7 +1,5 @@
-# Unit 1 — MD Summary
+# Unit 1 Assignment — MD Summary
 **Name:** Aditya Ghorpade  
-**Deliverable:** Unit1_Aditya_Ghorpade_summary.md  
-**Scope:** Deep dive on `thelook_ecommerce` (BigQuery public dataset) using AI-assisted SQL, validation, and a 30-day revenue analysis.
 
 ---
 
