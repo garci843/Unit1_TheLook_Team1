@@ -1,0 +1,21 @@
+# Unit 1 — MD Summary
+**Name:** Aditya Ghorpade  
+**Deliverable:** Unit1_Aditya_Ghorpade_summary.md  
+**Scope:** Deep dive on `thelook_ecommerce` (BigQuery public dataset) using AI-assisted SQL, validation, and a 30-day revenue analysis.
+
+---
+
+## 1) What I Found
+The analysis began by examining three core KPIs: Customer Acquisition Rate, Customer Lifetime Value (CLV), and Average Order Value (AOV). Together, these metrics offered a balanced perspective on customer growth, long-term value, and transaction-level profitability. Among male customers (“M”), several region and device combinations stood out for their higher-than-average AOVs, suggesting that male shoppers in specific states and on certain devices represent high-value segments. When focusing on the Accessories category, the analysis revealed that desktop users typically generated higher AOVs compared to mobile users, though this pattern varied across regions. Additionally, a 30-day revenue review showed noticeable daily volatility overlaid on a stable trend when smoothed using a seven-day moving average, pointing to recurring spikes likely tied to promotions or seasonal cycles. The dataset’s structure enabled clear joins between orders, order items, products, and users, ensuring reliable segmentation by gender, category, region, and device type. Overall, these findings highlight that both AOV and revenue performance are highly dependent on segment-specific and operational factors, reinforcing the need for validation and contextualization before drawing conclusions.
+
+---
+
+## 2) What Changed After Validation
+Several refinements were introduced after validating the initial findings to ensure the insights were both accurate and resilient. First, the equivalence between item-level and order-level AOV computations was tested and confirmed. While both produced consistent results, the order-level metric was standardized for clarity and interpretability in subsequent analyses. Next, the impact of outliers was assessed by comparing raw AOV values to winsorized versions capped at the 1st and 99th percentiles within each month. The comparison revealed that a few extreme transactions had an outsized influence on results, particularly in specific region-device combinations. Consequently, the winsorized AOV measure was adopted as the default for future evaluations. Lastly, a region fixed-effect analysis was conducted to isolate the true influence of device type by holding regional factors constant. The results showed that once regional variation was controlled for, AOV gaps across devices narrowed, indicating that some earlier differences stemmed from geographic mix rather than device behavior. These validation steps strengthened the credibility of the insights and improved interpretability across stakeholder audiences.
+
+---
+
+## 3) What I Propose
+Going forward, the focus should be on state-device combinations that exhibit consistent AOV performance under both raw and winsorized analyses, as these segments represent stable and scalable opportunities. Establishing a repeatable validation framework will also be critical; developing a small library of SQL templates for order-level baselines, winsorization, and fixed-effect re-estimation will help maintain transparency and reproducibility across future studies. Additionally, the 30-day revenue trend provides an opportunity to better align marketing and promotional timing with observed spending rhythms. Device-specific A/B testing, particularly where desktop users maintain higher AOVs after region adjustment, could yield actionable insights for conversion optimization. Looking ahead, enriching the dataset with additional variables such as discount percentages and marketing channel data would enable more granular elasticity and ROI analyses. Success in the next phase will be measured by stable gains in validated AOV and a reduced gap between naïve and region-adjusted metrics, signaling stronger data reliability and better-informed strategic decisions.
+
+---
