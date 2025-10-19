@@ -1,1 +1,34 @@
+The Look – Integrated Analysis Summary
+This analysis examines The Look’s business performance from 2019 through 2025, combining SQL-based hypothesis testing, data validation, and segment-level exploration. The objective was to understand revenue dynamics, profitability trends, and customer behavior, while ensuring that all insights were grounded in accurate and validated data.
+
+Key Findings
+Revenue and Profitability Trends
+From 2019 to 2025, The Look experienced steady revenue growth, driven by strong sales momentum across multiple categories. However, a sharp decline occurred in October 2025, when revenue dropped by approximately 68.5 percent compared to September. This was a significant deviation from the preceding months of consistent growth and signals either a seasonal pattern, operational disruption, or campaign lapse.
+Gross profit increased in line with revenue, but the gross profit margin remained flat, indicating that rising costs offset much of the sales growth. This suggests that the company maintained pricing and cost structures rather than improving efficiency or markup during the expansion period. The average order value (AOV) showed no clear direction, fluctuating from month to month, reflecting shifts in product mix and customer purchasing patterns rather than structural pricing changes.
+Category and Segment Insights
+Analysis of the top ten categories by revenue revealed that a small number of product groups—especially Women’s Dresses and Fashion Hoodies & Sweatshirts—accounted for a majority of sales. This concentration highlights both the strength and risk of relying heavily on a few categories.
+Device-level analysis, which linked event data to orders within a seven-day window, showed that Chrome desktop users generated the highest AOVs and accounted for a large share of completed purchases. Organic traffic emerged as the dominant acquisition channel, suggesting that The Look’s existing brand visibility and search presence are key growth drivers.
+Discount analysis found that most revenue originated from purchases with minimal markdowns (0–5 percent). This indicates that several customer segments are not highly price-sensitive, and sales performance may be driven more by brand appeal and convenience than by promotions.
+
+Validation and Refinements
+Several validation steps were taken to ensure accuracy and reliability.
+Gross Profit Margin Correction:
+The initial calculation incorrectly implied that gross profit margin could be derived directly from monthly groupings. Upon review, we confirmed that p.cost represents unit cost, which must be multiplied by the number of units sold before aggregation. Revenue and cost of goods sold (COGS) were first summed at the product level and then divided to yield a true weighted margin. This correction aligned the financial metrics with standard accounting principles and prevented distortion in category-level comparisons.
+Order and Outlier Validation:
+Revenue calculations were restricted to Completed orders to exclude canceled or returned transactions, ensuring that only realized sales were included. Mean versus median AOV was compared to assess the impact of outliers, with the median adopted when large differences were detected. Winsorization (capping at the 1st and 99th percentiles) was applied to stabilize results across regions and devices.
+Regional Controls:
+After introducing region fixed effects, some differences in AOV across devices narrowed, showing that earlier variation was partly due to geographic sales mix rather than device behavior. Similarly, testing discount elasticity by region confirmed that while most states maintained sales at low discount levels, a few relied on deeper promotions to drive revenue.
+These validation measures strengthened confidence in the insights and created a framework for reproducible, bias-resistant analysis.
+
+Recommendations
+1. Leverage Growth Drivers
+Revenue grew consistently through September 2025, suggesting that several campaigns, pricing strategies, or product lines were highly effective during that period. The company should identify which marketing channels, regions, or customer segments contributed most to that success and use those findings to build repeatable growth playbooks. Retention strategies such as personalized recommendations or free shipping thresholds could encourage repeat purchases without reducing margins.
+2. Address the October Decline
+The sharp revenue drop in October warrants closer investigation. It may reflect seasonal demand shifts, reduced promotional activity, or inventory limitations. Conducting a root-cause review across marketing, inventory, and fulfillment operations can clarify the issue. If seasonal, the company should introduce a targeted Q4 promotional calendar to maintain engagement and balance revenue throughout the year.
+3. Standardize Validation Practices
+Future reporting and analysis should consistently apply validation steps such as order-status filtering, median-based AOV comparisons, and regional adjustments. Establishing a small library of reusable SQL templates for these checks would improve transparency and consistency across analytical teams. Over time, integrating marketing spend and ROI data will enable a shift from revenue-based to profitability-based decision-making.
+
+Conclusion
+The Look has demonstrated solid growth and market strength but faces challenges in maintaining profitability and stability. By combining data validation, targeted segmentation, and repeatable growth strategies, the company can strengthen its decision-making foundation and sustain long-term performance. The next stage should focus on refining profitability metrics, expanding regional insights, and aligning marketing investment with proven high-value segments to ensure continued, data-driven success.
+
 
