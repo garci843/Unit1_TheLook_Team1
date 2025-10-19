@@ -72,7 +72,34 @@ Create an appropriate plot to show the monthly revenue from earlier. dataframe i
 
 
 Ethan:
+Prompt 1 – Start DIVE analysis project
+You’re helping me build a DIVE analytics project using the dataset bigquery-public-data.thelook_ecommerce. Use the DIVE method (Discover, Investigate, Validate, Extend) and tools BigQuery SQL + Python + Plotly + Looker Studio. Generate insights that show growth opportunities and risks, and make recommendations with business value. Be structured and explain your steps clearly.
 
+Prompt 2 – Generate Discover KPIs
+Use BigQuery SQL to calculate the top 3 KPIs for ecommerce growth:
+
+Monthly revenue trend with MoM and YoY changes using window functions
+
+Repeat purchase rate per month
+
+Average order value (AOV) per month
+Return clean SQL for each metric and explain each KPI briefly.
+
+Prompt 3 – Investigate a category and customer segment
+Investigate performance by product category and customer segment. Filter to one product category and one segment and analyze revenue, AOV, and discount behavior. Show which regions or customer characteristics drive performance. Use CTEs and GROUP BY. Return SQL.
+
+Prompt 4 – Investigate Footwear × Male customers
+Deep-dive into the Footwear category filtered to male customers. Analyze revenue trends, average discount percentage, and AOV by state or region. Return SQL.
+
+Prompt 5 – Validate misleading insights
+Show how an insight could be misleading. Cross-check whether any revenue increase in Footwear is caused by heavy discounting that lowers AOV. Use discount buckets and compare revenue vs AOV. Return SQL.
+
+Prompt 6 – Extend with visualization
+Create a SQL query for daily revenue in the last 180 days to use in a Plotly line chart. This will be used in the Extend part of DIVE.
+
+Prompt 7 – Summary recommendations
+Write strategist-style recommendations at the end of the analysis. Connect insights to actions and impact. Provide 2–3 recommendations using this structure:
+Finding → Implication → Action → Expected impact
 
 
 
