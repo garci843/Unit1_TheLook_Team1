@@ -272,4 +272,183 @@ Interpretation (2–4 sentences): If states with higher avg_discount_pct also ha
 
 
 
-Aditya
+# Aditya
+
+<u>Prompt #1:</u>
+```
+Load this database: `bigquery-public-data.thelook_ecommerce` into the code.
+```
+
+<u>Prompt #2:</u>
+```
+BigQuerySQL Only:
+Task: Display the first 5 rows of every table.
+Table: `bigquery-public-data.thelook_ecommerce`
+Follow this format when creating code:
+query = """
+*Write query here*
+"""
+query_job = client.query(query)
+results_df = query_job.to_dataframe()
+```
+
+<u>Prompt #3:</u>
+```
+Identify the top 3 growth KPIs for the business based on data from `bigquery-public-data.thelook_ecommerce`.
+```
+
+<u>Prompt #4:</u>
+```
+BigQuery SQL Only
+
+Generate an SQL query that calculates the Average Order Value and its Month-over-Month (MoM) and Year-over-Year (YoY) growth percentages.
+
+Use CTEs and window functions.
+
+Use these tables:
+`bigquery-public-data.thelook_ecommerce.order_items` (oi)
+`bigquery-public-data.thelook_ecommerce.orders` (o)
+
+Average Order Value (AOV) is calculated by dividing the total revenue (sum of `sale_price` from the `order_items` table) by the total number of orders (count of distinct `order_id`s from the `orders` table).
+
+Order the result by month and year descending and limit it to 24 rows.
+```
+
+<u>Prompt #5:</u>
+```
+BigQuery SQL Only
+
+Generate an SQL query that calculates the top 10 Average Order Value (AOV) for the “Accessories” product category.
+
+Use CTEs and window functions to analyze and compare the following drivers:
+
+Region — List out the regions of the products
+Device Type — list out the device types of the product
+
+Tables:
+bigquery-public-data.thelook_ecommerce.order_items (oi)
+bigquery-public-data.thelook_ecommerce.orders (o)
+bigquery-public-data.thelook_ecommerce.products (p)
+
+Use the 'state' column in 'bigquery-public-data.thelook_ecommerce.orders' for Region
+
+Use 'device_type' column in 'bigquery-public-data.thelook_ecommerce.orders' for Device Type
+
+Order results by AOV desc.
+
+The final query should have the product name, region, device type, and corresponding AOV.
+```
+
+<u>Prompt #6:</u>
+```
+BigQuery SQL Only
+
+Generate an SQL query that calculates the top 10 Average Order Value (AOV) for the M Customer Segment.
+
+Use CTEs and window functions to analyze and compare the following drivers:
+
+Region — List out the regions of the products
+Device Type — list out the device types of the product
+
+Tables:
+bigquery-public-data.thelook_ecommerce.order_items (oi)
+bigquery-public-data.thelook_ecommerce.orders (o)
+bigquery-public-data.thelook_ecommerce.products (p)
+
+Use the 'state' column in 'bigquery-public-data.thelook_ecommerce.orders' for Region
+
+Use 'device_type' column in 'bigquery-public-data.thelook_ecommerce.orders' for Device Type
+
+Filter by 'M' in the gender column of 'bigquery-public-data.thelook_ecommerce.users'
+
+Order results by AOV desc.
+
+The final query should have the product name, region, device type, and corresponding AOV.
+```
+
+<u>Prompt #7:</u>
+```
+BigQuery SQL Only
+
+Generate two parallel CTE pipelines to validate AOV for male (“M”) customers:
+
+Item-level definition: AOV = SUM(oi.sale_price) / COUNT(DISTINCT o.order_id)
+
+Order-level definition: First aggregate to order totals (SUM(oi.sale_price) per o.order_id), then AOV = AVG(order_total)
+
+Use CTEs and window functions to produce both metrics by state and device_type, and show their absolute and % difference.
+
+Tables:
+
+bigquery-public-data.thelook_ecommerce.order_items (oi)
+
+bigquery-public-data.thelook_ecommerce.orders (o)
+
+bigquery-public-data.thelook_ecommerce.users (u)
+
+Joins/Filters:
+
+oi.order_id = o.order_id, o.user_id = u.id
+
+u.gender = 'M'
+
+Return the comparison by state, device_type. Order by largest % difference desc. Limit 50.
+```
+
+
+<u>Prompt #8:</u>
+```
+BigQuery SQL Only
+
+Test whether the Accessories AOV insights are driven by outliers. Build two AOVs by state and device_type:
+
+Raw AOV (all orders)
+
+Winsorized AOV (winsorize order totals at the 1st and 99th percentiles within month)
+
+Use CTEs and window functions. Compute % change between raw and winsorized AOV to flag fragile insights.
+
+Tables:
+
+bigquery-public-data.thelook_ecommerce.order_items (oi)
+
+bigquery-public-data.thelook_ecommerce.orders (o)
+
+bigquery-public-data.thelook_ecommerce.products (p)
+
+Joins/Filters:
+
+oi.order_id = o.order_id, oi.product_id = p.id
+
+p.category = 'Accessories'
+
+Return state, device_type, raw_aov, winsor_aov, %_diff. Order by %_diff desc. Limit 20.
+```
+
+<u>Prompt #9:</u>
+```
+Generate Python code that:
+
+Runs a BigQuery SQL query to compute daily revenue for the last 30 days and
+Uses Plotly to render an interactive time-series line chart of that revenue.
+
+Data definition & filters:
+
+Revenue = SUM(oi.sale_price) from order_items.
+
+Join order_items (oi) to orders (o) on oi.order_id = o.order_id.
+
+Use DATE(o.created_at) for the order date (UTC).
+
+
+Tables:
+bigquery-public-data.thelook_ecommerce.order_items (oi)
+
+bigquery-public-data.thelook_ecommerce.orders (o)
+```
+
+<u>Prompt #10:</u>
+```
+Pretend you are a Business Strategist: Write 1–2 specific recommendations based on the revenue graph and previous analyses
+```
+
