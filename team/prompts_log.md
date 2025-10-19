@@ -1,4 +1,4 @@
-Daniel:
+# Daniel:
 BigQuery SQL Only
 
 **"Generate an SQL query that calculates the monthly revenue and its Month-over-Month (MoM) and Year-over-Year (YoY) growth percentages.
@@ -71,7 +71,7 @@ Create an appropriate plot to show the monthly revenue from earlier. dataframe i
 
 
 
-Ethan:
+# Ethan:
 Prompt 1 – Start DIVE analysis project
 You’re helping me build a DIVE analytics project using the dataset bigquery-public-data.thelook_ecommerce. Use the DIVE method (Discover, Investigate, Validate, Extend) and tools BigQuery SQL + Python + Plotly + Looker Studio. Generate insights that show growth opportunities and risks, and make recommendations with business value. Be structured and explain your steps clearly.
 
@@ -107,7 +107,7 @@ Finding → Implication → Action → Expected impact
 
 
 
-Arman: Gemini Prompt Cells
+# Arman: Gemini Prompt Cells
 
 Hypothesis A — Prompt Log
 Prompt to Gemini
