@@ -1,7 +1,11 @@
-What I learned: 
+**What I learned:**
 
+From Model B's performance, I learned that incorporating engineered features like `family_size`, `fare_bucket`, and `sex_pclass_interaction` can improve the model's ability to predict survival compared to a baseline with just the original features (assuming a comparison to Model A would show uplift). The AUC of 0.844 suggests the model has good discriminatory power. The confusion matrix revealed that the model is reasonably good at identifying both non-survivors and survivors, but has a higher rate of false negatives (missing actual survivors) than false positives (incorrectly predicting survival).
 
-Where the model failed:
+**Where the model failed:**
 
+The primary area where Model B struggled, based on the default 0.5 threshold, was in correctly identifying all actual survivors, as indicated by the 60 false negatives. This means a significant number of people who survived were predicted by the model not to survive. This could be due to limitations in the features used, or perhaps the model is not capturing complex interactions or patterns within the data that are crucial for predicting survival in certain cases. The relatively lower recall (0.5455) compared to precision (0.75) also highlights this difficulty in identifying all positive cases.
 
-Threshold I'd deploy.
+**Threshold I'd deploy:**
+
+The choice of deployment threshold depends heavily on the business objective and the relative costs of false positives and false negatives. At the default 0.5 threshold, the model minimizes false positives but has a notable number of false negatives. If the goal is to prioritize identifying as many survivors as possible (e.g., for targeted assistance), I might consider lowering the threshold to increase recall, even if it means accepting more false positives. Conversely, if minimizing incorrect predictions of survival is critical, a higher threshold would be appropriate. Without specific cost assumptions for false positives and false negatives, it's difficult to pinpoint an exact optimal threshold. Further analysis using cost-sensitive evaluation or examining the precision-recall trade-off at different thresholds would be necessary to make an informed decision. For a balanced approach, the default 0.5 threshold offers a reasonable trade-off as shown by the F1 score, but tuning based on specific requirements is recommended.
