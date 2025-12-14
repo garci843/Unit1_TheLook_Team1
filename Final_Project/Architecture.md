@@ -123,20 +123,20 @@ This document describes the end-to-end architecture for the Final Project pipeli
 
 ```
 
-# 2. Components & Responsibilities
+## 2. Components & Responsibilities
 
-## 2.1 GCS → BigQuery (Batch Path)
+### 2.1 GCS → BigQuery (Batch Path)
 
-### Colab / Notebook
+#### Colab / Notebook
 - Downloads Kaggle dataset.
 - Performs data quality checks such as null detection, range validation, and duplicate removal.
 - Writes raw batch files to GCS under a structured folder path.
 
-### GCS Raw Bucket
+#### GCS Raw Bucket
 - Serves as the landing zone for raw, unmodified batch data.
 - Supports reproducibility and versioning for batch ingest workflows.
 
-### BigQuery Batch Tables
+#### BigQuery Batch Tables
 - Curated tables populated from GCS.
 - Includes dimension and fact tables (e.g., entities, historical records).
 - Uses partitioning and documented schema definitions.
@@ -144,50 +144,50 @@ This document describes the end-to-end architecture for the Final Project pipeli
 
 ---
 
-## 2.2 Cloud Function → Pub/Sub → Dataflow → BigQuery (Streaming Path)
+### 2.2 Cloud Function → Pub/Sub → Dataflow → BigQuery (Streaming Path)
 
-### Cloud Function
+#### Cloud Function
 - Fetches data from a public API
 - Normalizes API responses into consistent JSON with entity identifiers, metric values, and timestamps.
 - Publishes streaming events into a Pub/Sub topic.
 - **Implements retry and logging for 429 or 5xx API failures.**
 
-### Pub/Sub Topic
+#### Pub/Sub Topic
 - Buffers incoming streaming messages.
 - Decouples Cloud Function from downstream processing.
 - Supports reliable, scalable message-based ingestion.
 
-### Dataflow (Pub/Sub → BigQuery Template)
+#### Dataflow (Pub/Sub → BigQuery Template)
 - Uses Google’s managed streaming template.
 - Subscribes to the Pub/Sub topic.
 - Processes and writes streaming rows to a BigQuery fact table.
 
-### BigQuery Streaming Fact Table
+#### BigQuery Streaming Fact Table
 - Stores near real-time data produced by Dataflow.
 - Typically partitioned by ingest or event timestamp.
 - Serves as input for time-series dashboards and ML feature engineering.
 
 ---
 
-## 2.3 Feature Engineering & BQML
+### 2.3 Feature Engineering & BQML
 
-### BQML Model Training
+#### BQML Model Training
 - Trains tree and linear regression models using streaming and batch data
 - Supports iterative model development entirely in SQL.
 
-### Model Evaluation and Explainability
+#### Model Evaluation and Explainability
 - ML.EVALUATE provides numerical metrics such as precision, recall, RMSE, or accuracy.
 - ML.EXPLAIN_PREDICT provides feature importance and attribution values.
 - Classification models include a threshold selection discussion based on evaluation metrics.
 
 ---
 
-## 2.4 Looker Studio Dashboards
+### 2.4 Looker Studio Dashboards
 
-### Data Sources
+#### Data Sources
 - Connects directly to BigQuery tables including batch curated tables, streaming fact tables, and model output tables.
 
-### Dashboard Requirements
+#### Dashboard Requirements
 - Displays three KPIs.
 - Includes at least one near real-time time-series visualization coming from the streaming table.
 
