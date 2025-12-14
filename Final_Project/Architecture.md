@@ -56,3 +56,34 @@ This document describes the end-to-end architecture for the Final Project pipeli
                               | Looker Studio  |
                               | Dashboards     |
                               +----------------+
+```
+```
+ Public API (weather/crypto/etc.)
+                 |
+                 v
+     +------------------------+
+     | Cloud Function (Gen2)  |
+     | - Fetch API            |
+     | - Normalize JSON       |
+     | - Add ingest_time      |
+     | - Publish to Pub/Sub   |
+     +-----------+------------+
+                 |
+                 v
+        +------------------+
+        |  Pub/Sub Topic   |
+        | stream-events    |
+        +--------+---------+
+                 |
+                 v
+        +---------------------+
+        |  Dataflow Template  |
+        |  (Pub/Sub → BQ)     |
+        +----------+----------+
+                   |
+                   v
+        +---------------------------+
+        | BigQuery Streaming Fact   |
+        |  BQ_DATASET.stream_events |
+        +---------------------------+
+```
